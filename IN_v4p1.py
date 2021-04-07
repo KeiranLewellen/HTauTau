@@ -168,10 +168,6 @@ for i in range(particlesConsidered):
     allOneVector.append(1.0)
 allOneVector = np.array(allOneVector)
 
-
-# Creates Training Data
-
-
 # Saves the jet data used for a specific training instance
 
 def save_jet_data(fileName):
@@ -185,7 +181,6 @@ def save_jet_data(fileName):
     h5file.create_dataset("totalDataInfo", data=totalData[:, 0:15], compression="lzf")
     h5file.close()
     del h5file
-
 
 print("Saving data")
 
@@ -202,9 +197,6 @@ svTestData=fTwo.get("svTestData").value
 testLabels=fTwo.get("testLabels").value
 totalData=fTwo.get("totalDataInfo").value
 '''
-# Creates decay information for test data
-
-testDecays=totalData[trainingDataLength+validationDataLength:,4:6]
 
 # Creates and trains the neural net
 
