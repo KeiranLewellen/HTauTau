@@ -117,13 +117,6 @@ RV = np.array(RV)
 RV = np.float32(RV)
 RVT = np.transpose(RV)
 
-# Creates all one vector
-
-allOneVector = []
-for i in range(particlesConsidered):
-    allOneVector.append(1.0)
-allOneVector = np.array(allOneVector)
-
 # Creates Training Data
 
 print("Preparing Data")
