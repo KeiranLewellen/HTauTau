@@ -131,24 +131,29 @@ labels = totalData[:, decayTypeColumn:]
 particleData = totalData[:, eventDataLength:particleDataLength + eventDataLength]
 svData = totalData[:, particleDataLength + eventDataLength:particleDataLength + svDataLength + eventDataLength]
 
-particleTrainingData = particleData[0:trainingDataLength, ].reshape(trainingDataLength, particlesConsidered,
-                                                                    entriesPerParticle)
-svTrainingData = svData[0:trainingDataLength, ].reshape(trainingDataLength, svConsidered, entriesPerSV)
+particleTrainingData = np.transpose(
+    particleData[0:trainingDataLength, ].reshape(trainingDataLength, entriesPerParticle, particlesConsidered),
+    axes=(0, 2, 1))
+svTrainingData = np.transpose(svData[0:trainingDataLength, ].reshape(trainingDataLength, entriesPerSV, svConsidered),
+                              axes=(0, 2, 1))
 trainingLabels = np.array(labels[0:trainingDataLength])
 
-particleValidationData = particleData[trainingDataLength:trainingDataLength + validationDataLength, ].reshape(
-    validationDataLength, particlesConsidered, entriesPerParticle)
-svValidationData = svData[trainingDataLength:trainingDataLength + validationDataLength, ].reshape(validationDataLength,
-                                                                                                  svConsidered,
-                                                                                                  entriesPerSV)
+particleValidationData = np.transpose(
+    particleData[trainingDataLength:trainingDataLength + validationDataLength, ].reshape(validationDataLength,
+                                                                                         entriesPerParticle,
+                                                                                         particlesConsidered),
+    axes=(0, 2, 1))
+svValidationData = np.transpose(
+    svData[trainingDataLength:trainingDataLength + validationDataLength, ].reshape(validationDataLength, entriesPerSV,
+                                                                                   svConsidered), axes=(0, 2, 1))
 validationLabels = np.array(labels[trainingDataLength:trainingDataLength + validationDataLength])
 
-particleTestData = particleData[trainingDataLength + validationDataLength:, ].reshape(
-    len(particleData) - trainingDataLength - validationDataLength, particlesConsidered, entriesPerParticle)
-svTestData = svData[trainingDataLength + validationDataLength:, ].reshape(
-    len(particleData) - trainingDataLength - validationDataLength, svConsidered, entriesPerSV)
+particleTestData = np.transpose(particleData[trainingDataLength + validationDataLength:, ].reshape(
+    len(particleData) - trainingDataLength - validationDataLength, entriesPerParticle, particlesConsidered),
+                                axes=(0, 2, 1))
+svTestData = np.transpose(svData[trainingDataLength + validationDataLength:, ].reshape(
+    len(particleData) - trainingDataLength - validationDataLength, entriesPerSV, svConsidered), axes=(0, 2, 1))
 testLabels = np.array(labels[trainingDataLength + validationDataLength:])
-
 
 # Saves the jet data used for a specific training instance
 
