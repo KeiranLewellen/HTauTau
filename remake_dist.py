@@ -94,7 +94,7 @@ def remake(iFiles_sig, iFiles_bkg, iFile_out):
         for ix in range(len(_x)-1):
 	      print(len(_x))
             for iy in range(len(_y)-1):
-                remade_df_bkg = pd.concat([remade_df_bkg,tmp_bkg[((tmp_bkg[weight[0]] >= _x[ix]) & (tmp_bkg[weight[0]] < _x[ix+1]) & (tmp_bkg[weight[1]] >= _y[iy]) & (tmp_bkg[weight[1]] < _y[iy+1]))].head(int(sighist[ix,iy])*fill_factor)], ignore_index = True)
+                remade_df_bkg = pd.concat([remade_df_bkg,tmp_bkg[((tmp_bkg[weight[0]] >= _x[ix]) & (tmp_bkg[weight[0]] < _x[ix+1]) & (tmp_bkg[weight[1]] >= _y[iy]) & (tmp_bkg[weight[1]] < _y[iy+1]))].head(int(int(sighist[ix,iy])*fill_factor))], ignore_index = True)
     
     # Shows fill factor per bin
     
