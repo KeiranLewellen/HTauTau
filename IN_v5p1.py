@@ -52,10 +52,7 @@ eventStart = 20
 eventLength = 11
 
 decayTypeColumn = -1
-'''
-trainingDataLength = 541000
-validationDataLength = 68000
-'''
+
 trainingDataLength = int(len(totalData)*0.8)
 
 validationDataLength = int(len(totalData)*0.1)
@@ -173,51 +170,6 @@ RV = np.array(RV)
 RV = np.float32(RV)
 RVT = np.transpose(RV)
 
-# Creates all one vector
-
-allOneVector = []
-for i in range(particlesConsidered):
-    allOneVector.append(1.0)
-allOneVector = np.array(allOneVector)
-
-
-# Creates Training Data
-
-
-# Saves the jet data used for a specific training instance
-
-def save_jet_data(fileName):
-    h5file = h5py.File(fileName, "w")
-    h5file.create_dataset("particleValidationData", data=particleValidationData, compression="lzf")
-    h5file.create_dataset("svValidationData", data=svValidationData, compression="lzf")
-    h5file.create_dataset("validationLabels", data=validationLabels, compression="lzf")
-    h5file.create_dataset("particleTestData", data=particleTestData, compression="lzf")
-    h5file.create_dataset("svTestData", data=svTestData, compression="lzf")
-    h5file.create_dataset("testLabels", data=testLabels, compression="lzf")
-    h5file.create_dataset("totalDataInfo", data=totalData[:, 0:15], compression="lzf")
-    h5file.close()
-    del h5file
-
-
-print("Saving data")
-'''
-#save_jet_data(modelName+",validationData.h5")
-'''
-# Opening previous data
-'''
-fTwo=h5py.File("./data/"+modelName+",validationData.h5",'r')
-particleValidationData=fTwo.get("particleValidationData").value
-svValidationData=fTwo.get("svValidationData").value
-validationLabels=fTwo.get("validationLabels").value
-particleTestData=fTwo.get("particleTestData").value
-svTestData=fTwo.get("svTestData").value
-testLabels=fTwo.get("testLabels").value
-totalData=fTwo.get("totalDataInfo").value
-'''
-# Creates decay information for test data
-
-testDecays=totalData[trainingDataLength+validationDataLength:,4:6]
-
 # Creates and trains the neural net
 
 # Particle data interaction NN
@@ -306,13 +258,8 @@ print("Loading weights")
 
 model.load_weights("./data/"+modelName+".h5")
 
-model.save("./data/"+modelName+",model.h5")
-
 model.save("./data/"+modelName+",model")
 
-'''
-model=load_model("./data/"+modelName+".h5",custom_objects={'tf': tf,'RK': RK,'RV': RV,'RS': RS,'RR': RR,'RRT': RRT,'RKT': RKT})
-'''
 print("Predicting")
 
 predictions = model.predict([particleTestData, svTestData, eventTestData])
