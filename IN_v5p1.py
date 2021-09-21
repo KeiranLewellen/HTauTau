@@ -34,7 +34,7 @@ from tensorflow.keras.models import load_model
 
 print("Extracting")
 
-fOne = h5py.File("training_data/comb_distcut1_5_flat_hadel_TTbar_WJets,ohe,event.z", 'r')
+fOne = h5py.File("training_data/comb_distcut1_5_flat_hadel_TTbar_WJets,ohe,eventNew.z", 'r')
 totalData = fOne["deepDoubleTau"][:]
 print(totalData.shape)
 #(1338472, 381)
@@ -49,7 +49,7 @@ entriesPerSV = 13
 
 eventDataLength = 32
 eventStart = 20
-eventLength = 11
+eventLength = 12
 
 decayTypeColumn = -1
 
@@ -60,7 +60,7 @@ validationDataLength = int(len(totalData)*0.1)
 numberOfEpochs = 100
 batchSize = 1024
 
-modelName="IN_hadel_v5p1,on_TTbar_WJets,ohe,eventOld,take_2"
+modelName="IN_hadel_v5p1,on_TTbar_WJets,ohe,event,take_2"
 
 # Creates Training Data
 
