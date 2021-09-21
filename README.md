@@ -1,3 +1,5 @@
+fjModule_eventData.py is used to create the data sets in nanoAODTools
+
 Use remake_dist.py to make the training data sets for the models. (This also does some preprocessing, so if using different data sets, at least look over the program.)
 
 IN_v5p1 is a pure interaction network that utilizes event data as well as particle data and secondary vertex data.
