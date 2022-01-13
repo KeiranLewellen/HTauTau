@@ -32,6 +32,7 @@ class pfcandProducer(Module):
         self.out = wrappedOutputTree
 
         self.out.branch("fj_idx", "I", 1)
+        self.out.branch("fj_msd", "F", 1)
         self.out.branch("fj_m", "F", 1)
         self.out.branch("fj_lsf3", "F", 1)
         self.out.branch("fj_pt", "F", 1)
@@ -74,6 +75,7 @@ class pfcandProducer(Module):
         self.out.branch("PF_id", "F", self.Nparts)
         self.out.branch("PF_trk", "F", self.Nparts)
         self.out.branch("PF_dz", "F", self.Nparts)
+        self.out.branch("PF_dzerr", "F", self.Nparts)
         self.out.branch("PF_dxy", "F", self.Nparts)
         self.out.branch("PF_dxyerr", "F", self.Nparts)
         self.out.branch("PF_vtx", "F", self.Nparts)
@@ -92,8 +94,6 @@ class pfcandProducer(Module):
         self.out.branch("sv_phi", "F", self.Nsvs)
         self.out.branch("tau_charge", "F", self.Ntaus)
         self.out.branch("tau_chargedIso", "F", self.Ntaus)
-        self.out.branch("tau_dxy", "F", self.Ntaus)
-        self.out.branch("tau_dz", "F", self.Ntaus)
         self.out.branch("tau_eta", "F", self.Ntaus)
         self.out.branch("tau_leadTkDeltaEta", "F", self.Ntaus)
         self.out.branch("tau_leadTkDeltaPhi", "F", self.Ntaus)
@@ -103,6 +103,7 @@ class pfcandProducer(Module):
         self.out.branch("tau_phi", "F", self.Ntaus)
         self.out.branch("tau_photonsOutsideSignalCone", "F", self.Ntaus)
         self.out.branch("tau_pt", "F", self.Ntaus)
+        self.out.branch("tau_rawAntiEle2018", "F", self.Ntaus)
         self.out.branch("tau_rawIso", "F", self.Ntaus)
         self.out.branch("tau_rawIsodR03", "F", self.Ntaus)
         self.out.branch("electron_charge", "F", self.Nelecs)
@@ -408,8 +409,6 @@ class pfcandProducer(Module):
             # Fill Taus
             Tau_charge = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_chargedIso = np.zeros(self.Ntaus, dtype=np.float16)
-            Tau_dxy = np.zeros(self.Ntaus, dtype=np.float16)
-            Tau_dz = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_eta = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_leadTkDeltaEta = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_leadTkDeltaPhi = np.zeros(self.Ntaus, dtype=np.float16)
@@ -419,6 +418,7 @@ class pfcandProducer(Module):
             Tau_phi = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_photonsOutsideSignalCone = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_pt = np.zeros(self.Ntaus, dtype=np.float16)
+            Tau_rawAntiEle2018 = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_rawIso = np.zeros(self.Ntaus, dtype=np.float16)
             Tau_rawIsodR03 = np.zeros(self.Ntaus, dtype=np.float16)
             tauv = ROOT.TLorentzVector()
@@ -430,8 +430,6 @@ class pfcandProducer(Module):
                 if jetv.DeltaR(tauv) < TauDRMATCH:
                     Tau_charge[tauIdx] = tau.charge
                     Tau_chargedIso[tauIdx] = tau.chargedIso
-                    Tau_dxy[tauIdx] = tau.dxy
-                    Tau_dz[tauIdx] = tau.dz
                     Tau_eta[tauIdx] = tau.eta - jeta
                     Tau_leadTkDeltaEta[tauIdx] = tau.leadTkDeltaEta
                     Tau_leadTkDeltaPhi[tauIdx] = tau.leadTkDeltaPhi
@@ -441,6 +439,7 @@ class pfcandProducer(Module):
                     Tau_phi[tauIdx] = signedDeltaPhi(tau.phi, jphi)
                     Tau_photonsOutsideSignalCone[tauIdx] = tau.photonsOutsideSignalCone
                     Tau_pt[tauIdx] = tau.pt / jpt
+                    Tau_rawAntiEle2018[tauIdx] = tau.rawAntiEle2018
                     Tau_rawIso[tauIdx] = tau.rawIso
                     Tau_rawIsodR03[tauIdx] = tau.rawIsodR03
                     tauIdx += 1
@@ -548,6 +547,7 @@ class pfcandProducer(Module):
             pfq = np.zeros(self.Nparts, dtype=np.float16)
             pfid = np.zeros(self.Nparts, dtype=np.float16)
             pfdz = np.zeros(self.Nparts, dtype=np.float16)
+            pfdzerr = np.zeros(self.Nparts, dtype=np.float16)
             pfdxy = np.zeros(self.Nparts, dtype=np.float16)
             pfdxyerr = np.zeros(self.Nparts, dtype=np.float16)
             pfvtx = np.zeros(self.Nparts, dtype=np.float16)
@@ -572,13 +572,13 @@ class pfcandProducer(Module):
             pf_q = []
             pf_id = []
             pf_dz = []
+            pf_dzerr = []
             pf_dxy = []
             pf_dxyerr = []
             pf_vtx = []
             for ip, fatpart in enumerate(fatpfcands):
                 if ip not in candrange:
                     continue
-                print(fatpart.pFCandsIdx)
                 part = pfcands[fatpart.pFCandsIdx]
                 pf_pt.append([part.pt / jpt, arrIdx])
                 pf_eta.append(part.eta - jeta)
@@ -588,6 +588,7 @@ class pfcandProducer(Module):
                 pf_q.append(part.charge)
                 pf_id.append(part.pdgId)
                 pf_dz.append(part.dz)
+                pf_dzerr.append(part.dzErr)
                 pf_dxy.append(part.d0)
                 pf_dxyerr.append(part.d0Err)
                 pf_trk.append(part.trkChi2)
@@ -612,9 +613,9 @@ class pfcandProducer(Module):
             pf_pt.sort(reverse=True)
             pf_pt_list = [index[0] for index in pf_pt]
             pf_order = [index[1] for index in pf_pt]
-            for ip in range(min(self.Nparts, len(pfpt))):
-                pfpt[ip] = pf_pt_list[ip]
+            for ip in range(min([self.Nparts, len(pfpt), len(pf_pt_list)])):
                 i = pf_order[ip]
+                pfpt[ip] = pf_pt_list[i]
                 pfeta[ip] = pf_eta[i]
                 pfphi[ip] = pf_phi[i]
                 pfpup[ip] = pf_pup[i]
@@ -623,10 +624,12 @@ class pfcandProducer(Module):
                 pfid[ip] = pf_id[i]
                 if pf_q[i] == 0:
                     pfdz[ip] = 0
+                    pfdzerr[ip] = 0
                     pfdxy[ip] = 0
                     pfdxyerr[ip] = 0
                 else:
                     pfdz[ip] = pf_dz[i]
+                    pfdzerr[ip] = pf_dzerr[i]
                     pfdxy[ip] = pf_dxy[i]
                     pfdxyerr[ip] = pf_dxyerr[i]
                 pftrk[ip] = pf_trk[i]
@@ -687,14 +690,13 @@ class pfcandProducer(Module):
             self.out.fillBranch("PF_q", pfq)
             self.out.fillBranch("PF_id", pfid)
             self.out.fillBranch("PF_dz", pfdz)
+            self.out.fillBranch("PF_dzerr", pfdzerr)
             self.out.fillBranch("PF_dxy", pfdxy)
             self.out.fillBranch("PF_dxyerr", pfdxyerr)
             self.out.fillBranch("PF_trk", pftrk)
             self.out.fillBranch("PF_vtx", pfvtx)
             self.out.fillBranch("tau_charge", Tau_charge)
             self.out.fillBranch("tau_chargedIso", Tau_chargedIso)
-            self.out.fillBranch("tau_dxy", Tau_dxy)
-            self.out.fillBranch("tau_dz", Tau_dz)
             self.out.fillBranch("tau_eta", Tau_eta)
             self.out.fillBranch("tau_leadTkDeltaEta", Tau_leadTkDeltaEta)
             self.out.fillBranch("tau_leadTkDeltaPhi", Tau_leadTkDeltaPhi)
@@ -704,6 +706,7 @@ class pfcandProducer(Module):
             self.out.fillBranch("tau_phi", Tau_phi)
             self.out.fillBranch("tau_photonsOutsideSignalCone", Tau_photonsOutsideSignalCone)
             self.out.fillBranch("tau_pt", Tau_pt)
+            self.out.fillBranch("tau_rawAntiEle2018", Tau_rawAntiEle2018)
             self.out.fillBranch("tau_rawIso", Tau_rawIso)
             self.out.fillBranch("tau_rawIsodR03", Tau_rawIsodR03)
             self.out.fillBranch("electron_charge", Electron_charge)
